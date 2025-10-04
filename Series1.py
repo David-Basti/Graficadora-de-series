@@ -7,7 +7,7 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import funciones as fn
-#
+###
 st.title("Graficadora de Series")
 
 funciones = {
@@ -70,5 +70,6 @@ st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
 st.code("""
 i*exp(i*n*2*pi*x)/(2*n*pi)""")
+
 
 

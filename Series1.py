@@ -81,6 +81,9 @@ st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
 #st.code("""
 #i*exp(i*n*2*pi*x)/(2*n*pi)""")
+st.code("""
+2*sen((2*n-1)*x)/(pi*(2*n-1))""")
+
 
 
 

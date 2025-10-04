@@ -61,10 +61,13 @@ with col2:
 st.markdown("**Algunas series:**")
 
 st.code("""
-1) -4/pi*(-1)**(n)/(2*n-1)*cos((2*n-1)*x)
-2) sin(n*pi*x)/(n*pi)
-3) 4*sin((2*n-1)*x)/(pi*(2*n-1))
-4) -2*sin(x*(2*n-1))/((2*n-1)*pi)
-5) i*exp(i*n*2*pi*x)/(2*n*pi)
+-4/pi*(-1)**(n)/(2*n-1)*cos((2*n-1)*x)""")
+st.code("""
+sin(n*pi*x)/(n*pi)""")
+st.code("""
+4*sin((2*n-1)*x)/(pi*(2*n-1))""")
+st.code("""
+-2*sin(x*(2*n-1))/((2*n-1)*pi)""")
+st.code("""
+i*exp(i*n*2*pi*x)/(2*n*pi)""")
 
-""")

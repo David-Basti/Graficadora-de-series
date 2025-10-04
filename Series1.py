@@ -36,7 +36,7 @@ with col1:
 # Expresión de la serie
 #expr_cos = st.text_input("Expresión de los coeficientes coseno (en función de n y x)", value="(1/n)*np.cos(n*x)")
 #expr_sin = st.text_input("Expresión de los coeficientes seno (en función de n y x)", value="(1/n)*np.sin(n*x)")
-expr_serie = st.text_input("Expresión de la serie en función de x y n", value="(1/n)*np.cos(n*x)+(1/n)*np.sin(n*x)")
+expr_serie = st.text_input("Expresión de la serie en función de x y n", value="(1/n)*cos(n*x)+(1/n)*sin(n*x)")
 # Vector x
 x = np.linspace(x_min, x_max, 1000)
 y = np.ones_like(x,dtype=complex) * a0
@@ -66,4 +66,5 @@ st.code("""
 3) 4*sin((2*n-1)*x)/(pi*(2*n-1))
 4) -2*sin(x*(2*n-1))/((2*n-1)*pi)
 5) i*exp(i*n*2*pi*x)/(2*n*pi)
+
 """)

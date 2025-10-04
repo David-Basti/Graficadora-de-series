@@ -43,6 +43,7 @@ with col1:
 #expr_cos = st.text_input("Expresión de los coeficientes coseno (en función de n y x)", value="(1/n)*np.cos(n*x)")
 #expr_sin = st.text_input("Expresión de los coeficientes seno (en función de n y x)", value="(1/n)*np.sin(n*x)")
 expr_serie = st.text_input("Expresión de la serie en función de x y n", value="(1/n)*cos(n*x)+(1/n)*sin(n*x)")
+expr_funcion = st.text_input("Expresión de g(x) tal que g(x)*(a0/2+serie)", value="1")
 # Vector x
 x = np.linspace(x_min, x_max, 1000)
 y = np.ones_like(x,dtype=complex) * a0
@@ -54,7 +55,11 @@ for n in range(1, int(N)+1):
     except Exception as e:
         st.error(f"Error en la expresión: {e}")
         break
-
+try:
+    g = eval(expr_funcion, funciones, {"x": x})
+    y = g * y
+except Exception as e:
+    st.error(f"Error en la función g(x): {e}")
 # Gráfico
 with col2:
     fig, ax = plt.subplots()
@@ -76,6 +81,7 @@ st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
 #st.code("""
 #i*exp(i*n*2*pi*x)/(2*n*pi)""")
+
 
 
 

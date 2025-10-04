@@ -42,8 +42,12 @@ with col1:
     x_min = st.number_input("Extremo inferior del intervalo", value=-np.pi)
     x_max = st.number_input("Extremo superior del intervalo", value=np.pi)
     N = st.number_input("Número de términos (N)", min_value=1, value=5)
-    a0 = st.number_input("Valor de a0/2", value=0.0)
-
+    expr_a0 = st.text_input("Valor de a0/2", value="0")
+try:
+    a0 = eval(expr_a0, funciones)
+except Exception as e:
+    st.error(f"Error en a0/2: {e}")
+    a0 = 0
 # Expresión de la serie
 #expr_cos = st.text_input("Expresión de los coeficientes coseno (en función de n y x)", value="(1/n)*np.cos(n*x)")
 #expr_sin = st.text_input("Expresión de los coeficientes seno (en función de n y x)", value="(1/n)*np.sin(n*x)")
@@ -90,6 +94,7 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+
 
 
 

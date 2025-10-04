@@ -39,10 +39,16 @@ funciones = {
 col1, col2 = st.columns([0.2,0.8])
 # Parámetros de entrada
 with col1:
-    x_min = st.number_input("Extremo inferior del intervalo", value=-np.pi)
-    x_max = st.number_input("Extremo superior del intervalo", value=np.pi)
+    expr_xmin = st.text_input("Extremo inferior del intervalo", value="-pi")
+    expr_xmax = st.text_input("Extremo superior del intervalo", value="pi")
     N = st.number_input("Número de términos (N)", min_value=1, value=5)
     expr_a0 = st.text_input("Valor de a0/2", value="0")
+try:
+    x_min = eval(expr_xmin, funciones)
+    x_max = eval(expr_xmax, funciones)
+except Exception as e:
+    st.error(f"Error al evaluar los extremos del intervalo: {e}")
+    x_min, x_max = -np.pi, np.pi
 try:
     a0 = eval(expr_a0, funciones)
 except Exception as e:
@@ -94,6 +100,7 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+
 
 
 

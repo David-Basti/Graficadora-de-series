@@ -28,7 +28,12 @@ funciones = {
     "csc": fn.csc,
     "cot": fn.cot,
     "sqrt": np.sqrt,
-    "i": 1j
+    "i": 1j,
+    "senh": np.sinh,
+    "sinh": np.sinh,
+    "cosh": np.cosh,
+    "tanh": np.tanh,
+    "tgh": np.tanh
 }
 
 col1, col2 = st.columns([0.2,0.8])
@@ -83,6 +88,9 @@ st.code("""
 #i*exp(i*n*2*pi*x)/(2*n*pi)""")
 st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
+st.code("""
+(-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+
 
 
 

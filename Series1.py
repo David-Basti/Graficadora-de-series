@@ -55,7 +55,7 @@ with col2:
     ax.plot(x, y.real, label=f"Serie con N={N}")
     ax.set_xlabel("x")
     ax.set_ylabel("f(x)")
-    ax.legend()
+    #ax.legend()
     st.pyplot(fig)
 
 st.markdown("**Algunas series:**")
@@ -70,7 +70,7 @@ st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
 st.code("""
 i*exp(i*n*2*pi*x)/(2*n*pi)""")
-##Qo
+
 
 
 

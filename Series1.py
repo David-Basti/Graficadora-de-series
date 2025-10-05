@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import funciones as fn
 import plotly.graph_objects as go
-###
+import sympy as sp
 
 st.set_page_config(
     page_title="Graficadora de Series de Fourier",
@@ -34,77 +34,87 @@ funciones = {
     "sinh": np.sinh,
     "cosh": np.cosh,
     "tanh": np.tanh,
-    "tgh": np.tanh
+    "tgh": np.tanh,
+    "asen": np.asin,
+    "atg": np.atan,
+    "acos": np.acos,
+    "ln": np.log,
+    "log": np.log
 }
 
-col1, col2 = st.columns([0.2,0.8])
+col1, col2, col3 = st.columns([0.25,0.25,0.5])
 # Parámetros de entrada
 with col1:
-    expr_xmin = st.text_input("Extremo inferior del intervalo", value="-pi")
-    expr_xmax = st.text_input("Extremo superior del intervalo", value="pi")
+    expr_xmin = st.text_input("Extremo inferior", value="-pi")
+    expr_xmax = st.text_input("Extremo superior", value="pi")
+with col2:
     N = st.number_input("Número de términos (N)", min_value=1, value=5)
     expr_a0 = st.text_input("Valor de a0/2", value="0")
-try:
-    x_min = eval(expr_xmin, funciones)
-    x_max = eval(expr_xmax, funciones)
-except Exception as e:
-    st.error(f"Error al evaluar los extremos del intervalo: {e}")
-    x_min, x_max = -np.pi, np.pi
-try:
-    a0 = eval(expr_a0, funciones)
-except Exception as e:
-    st.error(f"Error en a0/2: {e}")
-    a0 = 0
+x_min = fn.evaluar_sympy(expr_xmin) or -np.pi
+x_max = fn.evaluar_sympy(expr_xmax) or np.pi
+a0 = fn.evaluar_sympy(expr_a0) or 0
+a02=fn.evaluar_sympy_a0(expr_a0) or 0
 # Expresión de la serie
-#expr_cos = st.text_input("Expresión de los coeficientes coseno (en función de n y x)", value="(1/n)*np.cos(n*x)")
-#expr_sin = st.text_input("Expresión de los coeficientes seno (en función de n y x)", value="(1/n)*np.sin(n*x)")
-expr_serie = st.text_input("Expresión de la serie en función de x y n", value="(1/n)*cos(n*x)+(1/n)*sin(n*x)")
-expr_funcion = st.text_input("Expresión de g(x) tal que g(x)*(a0/2+serie)", value="1")
-# Vector x
-x = np.linspace(x_min, x_max, 1000)
-y = np.ones_like(x,dtype=complex) * a0
+x = sp.Symbol('x', real=True)
+with col3:
+    expr_serie = st.text_input("Expresión de la serie S_n(x)", value="(1/n)*cos(n*x)+(1/n)*sin(n*x)")
+    expr_funcion = st.text_input("Expresión de g(x) / g(x)*(a0/2+S_n(x))", value="1")
+
+# Definimos el símbolo simbólico
+x_sym = sp.Symbol('x', real=True)
+
+# Vector de evaluación numérica
+x_vals = np.linspace(x_min, x_max, 1000)
+
+# Convertir expresiones del usuario (usando tus funciones auxiliares en fn.py)
+serie_func, serie_sym = fn.convertir_expresion(expr_serie)
+g_func, g_sym = fn.convertir_expresion(expr_funcion)
+
+# Mostrar expresiones simbólicas en LaTeX
+n = sp.Symbol('n', integer=True)
+S_N_sym = sp.Sum(serie_sym, (n, 1, N))  
+st.latex(f"S_N(x) = {sp.latex(sp.nsimplify(g_sym*(a02+S_N_sym)))}")
+#st.latex(f"g(x) = {sp.latex(g_sym)}")
+
+# Inicializar la serie con a₀/2
+y = np.ones_like(x_vals, dtype=complex) * a0
 
 # Construcción de la serie
-for n in range(1, int(N)+1):
+for n in range(1, int(N) + 1):
     try:
-        y += eval(expr_serie, funciones, {"x": x, "n": n})
+        term = serie_func(x_vals, n)
+        y += term
     except Exception as e:
-        st.error(f"Error en la expresión: {e}")
+        st.error(f"Error al evaluar la serie para n={n}: {e}")
         break
+
+# Aplicar g(x)
 try:
-    g = eval(expr_funcion, funciones, {"x": x})
+    g = g_func(x_vals, 1)  # aunque no dependa de n, necesita el argumento
     y = g * y
 except Exception as e:
     st.error(f"Error en la función g(x): {e}")
-# Gráfico
-#with col2:
-#    fig, ax = plt.subplots()
-#    ax.plot(x, y.real, label=f"Serie con N={N}")
-#    ax.set_xlabel("x")
-#    ax.set_ylabel("f(x)")
-    #ax.legend()
-#    st.pyplot(fig)
 
-with col2:
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=x,
-        y=y.real,
-        mode='lines',
-        name=f"Serie con N={N}",
-        hovertemplate="x = %{x:.3f}<br>f(x) = %{y:.3f}"
-    ))
+# ==== GRÁFICO CON PLOTLY ====
 
-    fig.update_layout(
-        #title=f"Serie de Fourier con N = {N}",
-        xaxis_title="x",
-        yaxis_title="f(x)",
-        hovermode="x unified",
-        template="plotly_white"
-    )
+fig = go.Figure()
+fig.add_trace(go.Scatter(
+    x=x_vals,
+    y=y.real,
+    mode='lines',
+    name=f"Serie con N={N}",
+    hovertemplate="x = %{x:.3f}<br>f(x) = %{y:.3f}"
+))
 
-    st.plotly_chart(fig, use_container_width=True)
+fig.update_layout(
+    xaxis_title="x",
+    yaxis_title="f(x)",
+    hovermode="x unified",
+    template="plotly_white",
+    margin=dict(l=40, r=40, t=20, b=40)
+)
 
+st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("**Algunas series:**")
 
@@ -116,18 +126,12 @@ st.code("""
 4*sin((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
-#st.code("""
-#i*exp(i*n*2*pi*x)/(2*n*pi)""")
+st.code("""
+i*exp(i*n*2*pi*x)/(2*n*pi)""")
 st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
-
-
-
-
-
-
 
 
 

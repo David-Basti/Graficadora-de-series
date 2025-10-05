@@ -77,7 +77,7 @@ try:
 except Exception as e:
     st.error(f"Error en la función g(x): {e}")
 # Gráfico
-with col2:
+#with col2:
 #    fig, ax = plt.subplots()
 #    ax.plot(x, y.real, label=f"Serie con N={N}")
 #    ax.set_xlabel("x")
@@ -122,6 +122,7 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+
 
 
 

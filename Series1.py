@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="Graficadora de Series de Fourier",
     layout="centered"
 )
-
+#
 st.title("Graficadora de Series")
 
 funciones = {
@@ -137,3 +137,4 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+

@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="Graficadora de Series de Fourier",
     layout="centered"
 )
-#
+
 st.title("Graficadora de Series")
 
 funciones = {
@@ -84,13 +84,11 @@ st.latex(f"S_N(x) = {sp.latex(sp.nsimplify(g_sym*(a02+S_N_sym)))}")
 # Inicializar la serie con a₀/2
 y = np.ones_like(x_vals, dtype=np.complex128) * a0
 
-# Construcción de la serie
-for n in range(1, int(N) + 1):
+for n_val in range(1, int(N)+1):
     try:
-        term = serie_func(x_vals, n)
-        y += term
+        y += serie_func(x_vals, n_val)  # ya devuelve np.complex128
     except Exception as e:
-        st.error(f"Error al evaluar la serie para n={n}: {e}")
+        st.error(f"Error al evaluar la serie para n={n_val}: {e}")
         break
 
 # Aplicar g(x)
@@ -137,4 +135,3 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
-

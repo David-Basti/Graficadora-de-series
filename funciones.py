@@ -71,7 +71,7 @@ def convertir_expresion_simbolica(expr_str):
 # ==== PARTE NUMÉRICA ====
 def convertir_expresion_numerica(expr_str):
     """
-    Convierte la expresión del usuario a una función evaluable numéricamente con numpy.
+    Convierte expresión de usuario a función numérica evaluable con numpy.
     """
     reemplazos = {
         "sen":"sin",
@@ -86,7 +86,7 @@ def convertir_expresion_numerica(expr_str):
         "tgh":"tanh",
         "cosh":"cosh",
         "pi":"pi",
-        "e":"e",
+        "e":"E",
         "j":"I"
     }
     
@@ -108,15 +108,19 @@ def convertir_expresion_numerica(expr_str):
             "log": np.log,
             "sqrt": np.sqrt,
             "pi": np.pi,
-            "e": np.e,
-            "j": 1j,
+            "E": np.e,
             "I": 1j,
             "exp": np.exp,
+            "Exp": np.exp,  # <--- Esto faltaba
             "sec": lambda x: 1/np.cos(x),
             "csc": lambda x: 1/np.sin(x),
             "cot": lambda x: 1/np.tan(x)
         }
-        return sp.lambdify((x,n), expr_sym, modules=[modules_num, "numpy"])
+        func_num = sp.lambdify((x,n), expr_sym, modules=[modules_num, "numpy"])
+        
+        # Wrapper que fuerza salida a np.ndarray de tipo complejo
+        return lambda x_vals, n_val: np.array(func_num(x_vals,n_val), dtype=np.complex128)
+
     except Exception as e:
         import streamlit as st
         st.error(f"Error numérico al convertir '{expr_str}': {e}")

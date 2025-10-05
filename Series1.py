@@ -67,8 +67,13 @@ x_sym = sp.Symbol('x', real=True)
 x_vals = np.linspace(x_min, x_max, 1000)
 
 # Convertir expresiones del usuario (usando tus funciones auxiliares en fn.py)
-serie_func, serie_sym = fn.convertir_expresion(expr_serie)
-g_func, g_sym = fn.convertir_expresion(expr_funcion)
+# SÍMBOLO
+serie_sym = fn.convertir_expresion_simbolica(expr_serie)
+g_sym     = fn.convertir_expresion_simbolica(expr_funcion)
+
+# NUMÉRICA
+serie_func = fn.convertir_expresion_numerica(expr_serie)
+g_func     = fn.convertir_expresion_numerica(expr_funcion)
 
 # Mostrar expresiones simbólicas en LaTeX
 n = sp.Symbol('n', integer=True)
@@ -127,17 +132,8 @@ st.code("""
 st.code("""
 -2*sin(x*(2*n-1))/((2*n-1)*pi)""")
 st.code("""
-i*exp(i*n*2*pi*x)/(2*n*pi)""")
+j*exp(j*n*2*pi*x)/(2*n*pi)""")
 st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
-
-
-
-
-
-
-
-
-

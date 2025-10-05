@@ -16,10 +16,9 @@ def cot(x): return 1/np.tan(x)
 # ==== PARTE SIMBÓLICA ====
 def convertir_expresion_simbolica(expr_str):
     """
-    Convierte una expresión ingresada por el usuario a expresión simbólica de Sympy.
-    - Reemplaza funciones comunes (sen, tg, ln, etc.)
-    - Convierte j → I para números imaginarios
-    - Mantiene pi, e, senh, tgh, cosh
+    Convierte la expresión del usuario a simbólica:
+    - sen -> sin, tg -> tan, j -> I, etc.
+    - Sympy conoce todas las funciones necesarias
     """
     reemplazos = {
         "sen":"sin",
@@ -41,8 +40,29 @@ def convertir_expresion_simbolica(expr_str):
     for k, v in reemplazos.items():
         expr_str = expr_str.replace(k, v)
 
+    # Definir todas las funciones que Sympy puede usar
+    funciones = {
+        "sin": sp.sin,
+        "cos": sp.cos,
+        "tan": sp.tan,
+        "asin": sp.asin,
+        "acos": sp.acos,
+        "atan": sp.atan,
+        "cot": sp.cot,
+        "sec": sp.sec,
+        "csc": sp.csc,
+        "sinh": sp.sinh,
+        "cosh": sp.cosh,
+        "tanh": sp.tanh,
+        "log": sp.log,
+        "sqrt": sp.sqrt,
+        "E": sp.E,
+        "I": sp.I,
+        "pi": sp.pi
+    }
+
     try:
-        expr = sp.sympify(expr_str, evaluate=False)
+        expr = sp.sympify(expr_str, locals=funciones)
         return expr
     except Exception as e:
         st.error(f"Error simbólico al convertir '{expr_str}': {e}")
@@ -50,22 +70,56 @@ def convertir_expresion_simbolica(expr_str):
 
 # ==== PARTE NUMÉRICA ====
 def convertir_expresion_numerica(expr_str):
+    """
+    Convierte la expresión del usuario a una función evaluable numéricamente con numpy.
+    """
     reemplazos = {
-        "sen":"sin","tg":"tan","senh":"sinh","tgh":"tanh",
-        "ctg":"cot","sec":"sec","csc":"csc","ln":"log","pi":"np.pi","e":"np.e","j":"1j"
+        "sen":"sin",
+        "arcsen":"arcsin",
+        "arctg":"arctan",
+        "tg":"tan",
+        "ctg":"cot",
+        "sec":"sec",
+        "csc":"csc",
+        "ln":"log",
+        "senh":"sinh",
+        "tgh":"tanh",
+        "cosh":"cosh",
+        "pi":"pi",
+        "e":"e",
+        "j":"I"
     }
-    modules_num = [{"sin": np.sin, "cos": np.cos, "tan": np.tan,
-                "exp": np.exp, "log": np.log, "sqrt": np.sqrt,
-                "sinh": np.sinh, "cosh": np.cosh, "tanh": np.tanh,
-                "sec": sec, "csc": csc, "cot": cot,
-                "pi": np.pi, "I": 1j, "i": 1j,}, "numpy"]
-    for k,v in reemplazos.items(): expr_str = expr_str.replace(k,v)
+    
+    for k,v in reemplazos.items():
+        expr_str = expr_str.replace(k,v)
+    
+    x = sp.Symbol('x', real=True)
+    n = sp.Symbol('n', integer=True)
+
     try:
-        def f(x,n):
-            return eval(expr_str)
-        return f
+        expr_sym = sp.sympify(expr_str, evaluate=False)
+        modules_num = {
+            "sin": np.sin,
+            "cos": np.cos,
+            "tan": np.tan,
+            "sinh": np.sinh,
+            "cosh": np.cosh,
+            "tanh": np.tanh,
+            "log": np.log,
+            "sqrt": np.sqrt,
+            "pi": np.pi,
+            "e": np.e,
+            "j": 1j,
+            "I": 1j,
+            "exp": np.exp,
+            "sec": lambda x: 1/np.cos(x),
+            "csc": lambda x: 1/np.sin(x),
+            "cot": lambda x: 1/np.tan(x)
+        }
+        return sp.lambdify((x,n), expr_sym, modules=[modules_num, "numpy"])
     except Exception as e:
-        st.error(f"Error numérico '{expr_str}': {e}")
+        import streamlit as st
+        st.error(f"Error numérico al convertir '{expr_str}': {e}")
         return None
 
 def evaluar_sympy(expr_str):

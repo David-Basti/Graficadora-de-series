@@ -7,6 +7,7 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import funciones as fn
+import plotly.graph_objects as go
 ###
 
 st.set_page_config(
@@ -77,12 +78,33 @@ except Exception as e:
     st.error(f"Error en la función g(x): {e}")
 # Gráfico
 with col2:
-    fig, ax = plt.subplots()
-    ax.plot(x, y.real, label=f"Serie con N={N}")
-    ax.set_xlabel("x")
-    ax.set_ylabel("f(x)")
+#    fig, ax = plt.subplots()
+#    ax.plot(x, y.real, label=f"Serie con N={N}")
+#    ax.set_xlabel("x")
+#    ax.set_ylabel("f(x)")
     #ax.legend()
-    st.pyplot(fig)
+#    st.pyplot(fig)
+
+with col2:
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=y.real,
+        mode='lines',
+        name=f"Serie con N={N}",
+        hovertemplate="x = %{x:.3f}<br>f(x) = %{y:.3f}"
+    ))
+
+    fig.update_layout(
+        #title=f"Serie de Fourier con N = {N}",
+        xaxis_title="x",
+        yaxis_title="f(x)",
+        hovermode="x unified",
+        template="plotly_white"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
 
 st.markdown("**Algunas series:**")
 
@@ -100,6 +122,7 @@ st.code("""
 2*sen((2*n-1)*x)/(pi*(2*n-1))""")
 st.code("""
 (-1)**n*senh(6)/(36+pi**2*n**2)*(6*cos(n*pi*x/3)-n*pi*sen(n*pi*x/3))""")
+
 
 
 

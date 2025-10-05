@@ -82,7 +82,7 @@ st.latex(f"S_N(x) = {sp.latex(sp.nsimplify(g_sym*(a02+S_N_sym)))}")
 #st.latex(f"g(x) = {sp.latex(g_sym)}")
 
 # Inicializar la serie con a₀/2
-y = np.ones_like(x_vals, dtype=complex) * a0
+y = np.ones_like(x_vals, dtype=np.complex128) * a0
 
 # Construcción de la serie
 for n in range(1, int(N) + 1):

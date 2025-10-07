@@ -58,7 +58,9 @@ a02=fn.evaluar_sympy_a0(expr_a0) or 0
 x = sp.Symbol('x', real=True)
 with col3:
     expr_serie = st.text_input("Expresión de la serie S_n(x)", value="(1/n)*cos(n*x)+(1/n)*sin(n*x)")
-    expr_funcion = st.text_input("Expresión de g(x) / g(x)*(a0/2+S_n(x))", value="1")
+    expr_funcion2 = st.text_input("Expresión de g(x) / g(x)+a0/2+S_n(x)", value="0")
+    expr_funcion = st.text_input("Expresión de h(x) / h(x)*(g(x)+a0/2+S_n(x))", value="1")
+    
 
 # Definimos el símbolo simbólico
 x_sym = sp.Symbol('x', real=True)
@@ -69,16 +71,18 @@ x_vals = np.linspace(x_min, x_max, 1000)
 # Convertir expresiones del usuario (usando tus funciones auxiliares en fn.py)
 # SÍMBOLO
 serie_sym = fn.convertir_expresion_simbolica(expr_serie)
-g_sym     = fn.convertir_expresion_simbolica(expr_funcion)
+g_sym     = fn.convertir_expresion_simbolica(expr_funcion2)
+h_sym     = fn.convertir_expresion_simbolica(expr_funcion)
 
 # NUMÉRICA
 serie_func = fn.convertir_expresion_numerica(expr_serie)
-g_func     = fn.convertir_expresion_numerica(expr_funcion)
+g_func     = fn.convertir_expresion_numerica(expr_funcion2)
+h_func     = fn.convertir_expresion_numerica(expr_funcion)
 
 # Mostrar expresiones simbólicas en LaTeX
 n = sp.Symbol('n', integer=True)
 S_N_sym = sp.Sum(serie_sym, (n, 1, N))  
-st.latex(f"S_N(x) = {sp.latex(sp.nsimplify(g_sym*(a02+S_N_sym)))}")
+st.latex(f"S_N(x) = {sp.latex(sp.nsimplify(h_sym*(a02+g_sym+S_N_sym)))}")
 #st.latex(f"g(x) = {sp.latex(g_sym)}")
 
 # Inicializar la serie con a₀/2
@@ -93,10 +97,15 @@ for n_val in range(1, int(N)+1):
 
 # Aplicar g(x)
 try:
-    g = g_func(x_vals, 1)  # aunque no dependa de n, necesita el argumento
-    y = g * y
+    g = g_func(x_vals,1)
+    y = g + y
 except Exception as e:
-    st.error(f"Error en la función g(x): {e}")
+    st.error(f"Error en la fucnion g(x): {e}")
+try:
+    h = h_func(x_vals, 1)  # aunque no dependa de n, necesita el argumento
+    y = h * y
+except Exception as e:
+    st.error(f"Error en la función h(x): {e}")
 
 # ==== GRÁFICO CON PLOTLY ====
 
